@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { Nanum_Pen_Script } from "next/font/google";
+import "@/app/ui/globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Nanum_Pen_Script({
+  subsets: ["latin"],
+  display: "swap",
+  weight: `400`,
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={font.className}>{children}</body>
     </html>
   );
 }
