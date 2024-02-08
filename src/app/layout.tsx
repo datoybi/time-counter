@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Nanum_Pen_Script } from "next/font/google";
-import "@/app/ui/globals.css";
+import "@/components/ui/globals.css";
 
 const font = Nanum_Pen_Script({
   subsets: ["latin"],
   display: "swap",
-  weight: `400`,
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +20,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={font.className}>{children}</body>
+      {/* <body className={font.className}>{children}</body> */}
+      <body>{children}</body>
     </html>
   );
 }
