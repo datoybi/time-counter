@@ -17,7 +17,6 @@ const TimePicker = ({
   const printedDate = dayjs(time).format("hh:mm A");
   const printTime = (time: number) => (time < 10 ? `0${time}` : time);
   const ampmRef = useRef<any>(null);
-  // console.log(time);
   const [hour, minute, ampm] = printedDate.split(/:| /);
 
   const calculateTime = (type: any, value: any, time: any) => {

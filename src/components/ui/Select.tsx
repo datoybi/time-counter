@@ -7,9 +7,13 @@ const OPTIONS = [
   { name: "반차", id: "halfOff" },
 ];
 
-const Select = ({ workday, index, onChangeWorkType }: any) => {
-  const [checkedValue, setCheckedValue] = useState<any>(`${workday}-${OPTIONS[0].id}`);
+const Select = ({ workday, index, dayOff, onChangeWorkType }: any) => {
+  const [checkedValue, setCheckedValue] = useState<any>(`${workday}-${dayOff}`);
+  console.log(checkedValue);
+
   const handleChange = (id: any) => {
+    console.log("!!!!! ", id);
+    console.log(`! ${workday}-${id}`);
     setCheckedValue(`${workday}-${id}`);
     onChangeWorkType(workday, index, id);
   };

@@ -5,8 +5,7 @@ import Box from "@/components/ui/Box";
 import TimePicker from "@/components/TimePicker";
 import Select from "@/components/ui/Select";
 import dayjs from "dayjs";
-import { useState } from "react";
-// state여야함
+import { useState, useEffect } from "react";
 const printTime = (time: number) => (time < 10 ? `0${time}` : time);
 
 const DATA = [
@@ -73,11 +72,28 @@ const DATA = [
 ];
 
 export default function Home() {
-  // dayjs.extend(customParseFormat);
-  // dayjs.extend(isoWeek);
-  // console.log(`${time.hour()}:${time.minute()}`);
   const [data, setData] = useState<any>(DATA);
+
+  useEffect(() => {
+    if (!localStorage.getItem("workTime")) {
+      localStorage.setItem("workTime", JSON.stringify(data));
+    }
+    console.log(localStorage.getItem("workTime"));
+    setData(JSON.parse(localStorage.getItem("workTime")));
+  }, []);
+
   console.log(data);
+  console.log(
+    `${Math.floor(data.reduce((acc, el) => acc + Number(el.workingTime), 0) / 60)}:${data.reduce(
+      (acc, el) => acc + (Number(el.workingTime) % 60),
+      0
+    )}`
+  );
+
+  const handleOnSave = () => {
+    console.log(data);
+    localStorage.setItem("workTime", JSON.stringify(data));
+  };
 
   const handleChangeTime = (time: any, position: any) => {
     const filteredData = data.find((_, i) => i === position.index);
@@ -91,7 +107,6 @@ export default function Home() {
   const handleChangeWorkType = (id, index, workday) => {
     const filteredData = data.find((_, i) => i === index);
     filteredData.dayOff = workday;
-    console.log(filteredData);
     setData((prevData) => prevData.toSpliced(index, 1, filteredData));
   };
 
@@ -117,7 +132,12 @@ export default function Home() {
         <Box style="w-30 bg-neutral-500 text-neutral-50">
           <span>+{printedWorkingTime}</span>
         </Box>
-        <Select workday={week} index={index} onChangeWorkType={handleChangeWorkType} />
+        <Select
+          workday={week}
+          index={index}
+          dayOff={dayOff}
+          onChangeWorkType={handleChangeWorkType}
+        />
       </li>
     );
   });
@@ -127,7 +147,7 @@ export default function Home() {
       {/* <h1>하이</h1> */}
       <section className="w-3/5 bg-neutral-100 rounded-lg p-10">
         <div className="flex justify-end">
-          <button type="button" title="저장" className="text-3xl mr-3">
+          <button type="button" title="저장" className="text-3xl mr-3" onClick={handleOnSave}>
             💾
           </button>
           <button type="button" title="데이터 리셋" className="text-3xl">
