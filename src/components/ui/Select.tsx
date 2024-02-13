@@ -7,9 +7,12 @@ const OPTIONS = [
   { name: "반차", id: "halfOff" },
 ];
 
-const Select = ({ workday }: any) => {
+const Select = ({ workday, index, onChangeWorkType }: any) => {
   const [checkedValue, setCheckedValue] = useState<any>(`${workday}-${OPTIONS[0].id}`);
-  // console.log(checkedValue);
+  const handleChange = (id: any) => {
+    setCheckedValue(`${workday}-${id}`);
+    onChangeWorkType(workday, index, id);
+  };
 
   return (
     <div className="grid w-[16.5rem] grid-cols-3 gap-2 rounded-xl bg-gray-200 p-2 ml-3">
@@ -22,7 +25,7 @@ const Select = ({ workday }: any) => {
             value={id}
             className="peer hidden"
             checked={checkedValue === `${workday}-${id}`}
-            onChange={() => setCheckedValue(`${workday}-${id}`)}
+            onChange={() => handleChange(id)}
           />
           <label
             htmlFor={`${workday}-${id}`}

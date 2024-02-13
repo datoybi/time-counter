@@ -9,22 +9,34 @@ const TimePicker = ({
   onChangeTime,
   position,
 }: {
-  time: string;
+  time: any;
   onChangeTime: any;
   position: [index: number, place: "start" | "end"];
 }) => {
   dayjs.extend(customParseFormat);
+  const printedDate = dayjs(time).format("hh:mm A");
   const printTime = (time: number) => (time < 10 ? `0${time}` : time);
-  const ref = useRef<any>(null);
-  const now = dayjs(time, "hh:mm A");
-  const [hour, minute, ampm] = time.split(/:| /);
-  console.log(hour, minute, ampm);
-  const handleOnChange = (e: any) => {
-    const selectedTarget = e.target.name;
-    if (selectedTarget === "hour" && ref.current.value === "PM")
-      now.set(selectedTarget, Number(e.target.value) + 12);
-    const newTime = now.set(selectedTarget, Number(e.target.value));
+  const ampmRef = useRef<any>(null);
+  // console.log(time);
+  const [hour, minute, ampm] = printedDate.split(/:| /);
 
+  const calculateTime = (type: any, value: any, time: any) => {
+    if (type === "hour") {
+      if (ampmRef.current.value === "PM") return time.set("hour", Number(value) + 12);
+      return time.set("hour", value);
+    } else if (type === "minute") {
+      return time.set("minute", Number(value));
+    } else if (type === "ampm") {
+      if (value === "PM") {
+        return time.set("hour", time.hour() + 12);
+      } else {
+        return time.set("hour", time.hour() - 12);
+      }
+    }
+  };
+
+  const handleOnChange = (e: any) => {
+    const newTime = calculateTime(e.target.name, e.target.value, time);
     onChangeTime(newTime, position);
   };
 
@@ -64,8 +76,8 @@ const TimePicker = ({
           name="ampm"
           className="bg-transparent text-xl appearance-none outline-none"
           value={ampm}
+          ref={ampmRef}
           onChange={handleOnChange}
-          ref={ref}
         >
           <option value="AM">AM</option>
           <option value="PM">PM</option>

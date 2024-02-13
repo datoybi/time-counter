@@ -1,95 +1,126 @@
 // @ts-nocheck
 "use client";
-import customParseFormat from "dayjs/plugin/customParseFormat";
+
 import Box from "@/components/ui/Box";
 import TimePicker from "@/components/TimePicker";
 import Select from "@/components/ui/Select";
 import dayjs from "dayjs";
 import { useState } from "react";
 // state여야함
+const printTime = (time: number) => (time < 10 ? `0${time}` : time);
+
 const DATA = [
   {
     week: "월",
-    startTime: "09:01 AM",
-    endTime: "06:02 PM",
-    workingTime: "8:00",
+    startTime: dayjs().day(1).hour(9).minute(0).second(0),
+    endTime: dayjs().day(1).hour(18).minute(0).second(0),
+    workingTime: dayjs()
+      .day(1)
+      .hour(18)
+      .minute(0)
+      .second(0)
+      .diff(dayjs().day(1).hour(9).minute(0).second(0), "minute"),
     dayOff: "none",
   },
   {
     week: "화",
-    startTime: "10:11 AM",
-    endTime: "06:59 PM",
-    workingTime: "8:00",
+    startTime: dayjs().day(2).hour(9).minute(0).second(0),
+    endTime: dayjs().day(2).hour(18).minute(0).second(0),
+    workingTime: dayjs()
+      .day(2)
+      .hour(18)
+      .minute(0)
+      .second(0)
+      .diff(dayjs().day(2).hour(9).minute(0).second(0), "minute"),
     dayOff: "none",
   },
   {
     week: "수",
-    startTime: "09:00 AM",
-    endTime: "06:00 PM",
-    workingTime: "8:00",
+    startTime: dayjs().day(3).hour(9).minute(0).second(0),
+    endTime: dayjs().day(3).hour(18).minute(0).second(0),
+    workingTime: dayjs()
+      .day(3)
+      .hour(18)
+      .minute(0)
+      .second(0)
+      .diff(dayjs().day(3).hour(9).minute(0).second(0), "minute"),
     dayOff: "none",
   },
   {
     week: "목",
-    startTime: "08:00 AM",
-    endTime: "05:00 PM",
-    workingTime: "8:00",
+    startTime: dayjs().day(4).hour(9).minute(0).second(0),
+    endTime: dayjs().day(4).hour(18).minute(0).second(0),
+    workingTime: dayjs()
+      .day(4)
+      .hour(18)
+      .minute(0)
+      .second(0)
+      .diff(dayjs().day(4).hour(9).minute(0).second(0), "minute"),
     dayOff: "none",
   },
   {
     week: "금",
-    startTime: "09:00 AM",
-    endTime: "06:00 PM",
-    workingTime: "8:00",
+    startTime: dayjs().day(5).hour(9).minute(0).second(0),
+    endTime: dayjs().day(5).hour(18).minute(0).second(0),
+    workingTime: dayjs()
+      .day(5)
+      .hour(18)
+      .minute(0)
+      .second(0)
+      .diff(dayjs().day(5).hour(9).minute(0).second(0), "minute"),
     dayOff: "none",
   },
 ];
 
 export default function Home() {
-  dayjs.extend(customParseFormat);
+  // dayjs.extend(customParseFormat);
+  // dayjs.extend(isoWeek);
+  // console.log(`${time.hour()}:${time.minute()}`);
   const [data, setData] = useState<any>(DATA);
+  console.log(data);
 
   const handleChangeTime = (time: any, position: any) => {
-    console.log(time);
-    // const now = dayjs(time).format("hh:mm a");
-    console.log(position);
+    const filteredData = data.find((_, i) => i === position.index);
+    if (position.place === "start") filteredData.startTime = time;
+    if (position.place === "end") filteredData.endTime = time;
 
-    const filteredData = data.find((data, i) => i === position.index);
-    if (position.place === "start") {
-      const workingHour = dayjs(filteredData.endTime, "hh:mm A").diff(time, "hour");
-      const workingMin = dayjs(filteredData.endTime, "hh:mm A").diff(time, "minute");
-      console.log("start ", workingHour, " : ", workingMin);
-    } else if (position.place === "end") {
-      console.log();
-      const workingHour = time.diff(dayjs(filteredData.startTime, "hh:mm A"), "hour");
-      const workingMin = time.diff(dayjs(filteredData.startTime, "hh:mm A"), "minute");
-      console.log("end ", workingHour, " : ", workingMin);
-    }
-    // setData((prevData) => prevData.filter((data, i) => i === position.index));
+    filteredData.workingTime = filteredData.endTime.diff(filteredData.startTime, "minute");
+    setData((prevData) => prevData.toSpliced(position.index, 1, filteredData));
   };
 
-  const workDayHTML = data.map(({ week, startTime, endTime, workingTime, dayOff }, index) => (
-    <li key={week} className="flex items-center justify-center gap-2 mt-2">
-      <Box style="w-16 bg-neutral-500">
-        <span className="text-neutral-50">{week}</span>
-      </Box>
-      <TimePicker
-        time={startTime}
-        onChangeTime={handleChangeTime}
-        position={{ index, place: "start" }}
-      />
-      <span>~</span>
-      <TimePicker
-        time={endTime}
-        onChangeTime={handleChangeTime}
-        position={{ index, place: "end" }}
-      />
-      <Box style="w-30 bg-neutral-500 text-neutral-50">
-        <span>+{workingTime}</span>
-      </Box>
-      <Select workday={week} />
-    </li>
-  ));
+  const handleChangeWorkType = (id, index, workday) => {
+    const filteredData = data.find((_, i) => i === index);
+    filteredData.dayOff = workday;
+    console.log(filteredData);
+    setData((prevData) => prevData.toSpliced(index, 1, filteredData));
+  };
+
+  const workDayHTML = data.map(({ week, startTime, endTime, workingTime, dayOff }, index) => {
+    const printedWorkingTime = `${Math.floor(workingTime / 60) - 1}:${printTime(workingTime % 60)}`;
+
+    return (
+      <li key={week} className="flex items-center justify-center gap-2 mt-2">
+        <Box style="w-16 bg-neutral-500">
+          <span className="text-neutral-50">{week}</span>
+        </Box>
+        <TimePicker
+          time={startTime}
+          onChangeTime={handleChangeTime}
+          position={{ index, place: "start" }}
+        />
+        <span>~</span>
+        <TimePicker
+          time={endTime}
+          onChangeTime={handleChangeTime}
+          position={{ index, place: "end" }}
+        />
+        <Box style="w-30 bg-neutral-500 text-neutral-50">
+          <span>+{printedWorkingTime}</span>
+        </Box>
+        <Select workday={week} index={index} onChangeWorkType={handleChangeWorkType} />
+      </li>
+    );
+  });
 
   return (
     <main className="flex flex-col justify-center items-center w-full h-screen">
