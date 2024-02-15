@@ -1,27 +1,33 @@
 "use client";
+
 import { useRef } from "react";
-import Box from "@/components/ui/Box";
-import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import Box from "@/components/ui/box";
+import dayjs from "dayjs";
+import { printTime } from "@/app/lib/utils";
 
 const TimePicker = ({
   time,
   onChangeTime,
   position,
 }: {
-  time: any;
-  onChangeTime: any;
-  position: [index: number, place: "start" | "end"];
+  time: dayjs.Dayjs;
+  onChangeTime: (time: any, position: { index: number; place: "start" | "end" }) => void;
+  position: { index: number; place: "start" | "end" };
 }) => {
   dayjs.extend(customParseFormat);
+
   const printedDate = dayjs(time).format("hh:mm A");
-  const printTime = (time: number) => (time < 10 ? `0${time}` : time);
-  const ampmRef = useRef<any>(null);
+  const ampmRef = useRef<HTMLSelectElement>(null);
   const [hour, minute, ampm] = printedDate.split(/:| /);
 
-  const calculateTime = (type: any, value: any, time: any) => {
+  const calculateTime = (
+    type: "hour" | "minute" | "ampm" | string,
+    value: any,
+    time: dayjs.Dayjs
+  ) => {
     if (type === "hour") {
-      if (ampmRef.current.value === "PM") return time.set("hour", Number(value) + 12);
+      if (ampmRef?.current?.value === "PM") return time.set("hour", Number(value) + 12);
       return time.set("hour", value);
     } else if (type === "minute") {
       return time.set("minute", Number(value));
@@ -34,8 +40,8 @@ const TimePicker = ({
     }
   };
 
-  const handleOnChange = (e: any) => {
-    const newTime = calculateTime(e.target.name, e.target.value, time);
+  const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newTime = calculateTime(e.target.name, e.target.value, dayjs(time));
     onChangeTime(newTime, position);
   };
 

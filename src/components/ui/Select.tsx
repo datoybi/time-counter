@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { WeekType } from "@/app/lib/types";
 
 const OPTIONS = [
   { name: "해당없음", id: "none" },
@@ -7,15 +8,20 @@ const OPTIONS = [
   { name: "반차", id: "halfOff" },
 ];
 
-const Select = ({ workday, index, dayOff, onChangeWorkType }: any) => {
+type SelectType = {
+  workday: WeekType;
+  index: number;
+  dayOff: string;
+  onChangeWorkType: any;
+};
+
+const Select = ({ workday, index, dayOff, onChangeWorkType }: SelectType) => {
   const [checkedValue, setCheckedValue] = useState<any>(`${workday}-${dayOff}`);
-  console.log(checkedValue);
+  // console.log(checkedValue);
 
   const handleChange = (id: any) => {
-    console.log("!!!!! ", id);
-    console.log(`! ${workday}-${id}`);
     setCheckedValue(`${workday}-${id}`);
-    onChangeWorkType(workday, index, id);
+    onChangeWorkType({ workday, index, id });
   };
 
   return (
