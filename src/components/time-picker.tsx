@@ -1,19 +1,20 @@
-"use client";
-
 import { useRef } from "react";
+import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import Box from "@/components/ui/box";
-import dayjs from "dayjs";
-import { printTime } from "@/app/lib/utils";
+import { formatTime } from "@/app/lib/utils";
+import { DayOffType } from "@/app/lib/types";
 
 const TimePicker = ({
   time,
   onChangeTime,
   position,
+  dayOff,
 }: {
   time: dayjs.Dayjs;
   onChangeTime: (time: any, position: { index: number; place: "start" | "end" }) => void;
   position: { index: number; place: "start" | "end" };
+  dayOff: DayOffType;
 }) => {
   dayjs.extend(customParseFormat);
 
@@ -29,14 +30,11 @@ const TimePicker = ({
     if (type === "hour") {
       if (ampmRef?.current?.value === "PM") return time.set("hour", Number(value) + 12);
       return time.set("hour", value);
-    } else if (type === "minute") {
-      return time.set("minute", Number(value));
-    } else if (type === "ampm") {
-      if (value === "PM") {
-        return time.set("hour", time.hour() + 12);
-      } else {
-        return time.set("hour", time.hour() - 12);
-      }
+    }
+    if (type === "minute") return time.set("minute", Number(value));
+    if (type === "ampm") {
+      if (value === "PM") return time.set("hour", time.hour() + 12);
+      return time.set("hour", time.hour() - 12);
     }
   };
 
@@ -50,39 +48,42 @@ const TimePicker = ({
       <div className="flex">
         <select
           name="hour"
-          className="bg-transparent text-xl appearance-none outline-none cursor-pointer"
-          value={hour}
+          className="bg-transparent text-xl appearance-none outline-none cursor-pointer disabled:opacity-30 disabled:cursor-default"
+          value={dayOff === "dayOff" ? "0" : hour}
           onChange={handleOnChange}
+          disabled={dayOff === "dayOff"}
         >
           {Array(12)
             .fill("")
             .map((v, i) => (
-              <option key={i + 1} value={printTime(i + 1)}>
-                {printTime(i + 1)}
+              <option key={i + 1} value={formatTime(i + 1)}>
+                {formatTime(i + 1)}
               </option>
             ))}
         </select>
         <span className="text-xl mr-3">:</span>
         <select
           name="minute"
-          className="bg-transparent text-xl appearance-none outline-none mr-4 cursor-pointer"
-          value={minute}
+          className="bg-transparent text-xl appearance-none outline-none mr-4 cursor-pointer disabled:opacity-30 disabled:cursor-default"
+          value={dayOff === "dayOff" ? "0" : minute}
           onChange={handleOnChange}
+          disabled={dayOff === "dayOff"}
         >
           {Array(60)
             .fill("")
             .map((v, i) => (
-              <option key={i} value={printTime(i)}>
-                {printTime(i)}
+              <option key={i} value={formatTime(i)}>
+                {formatTime(i)}
               </option>
             ))}
         </select>
         <select
           name="ampm"
-          className="bg-transparent text-xl appearance-none outline-none"
+          className="bg-transparent text-xl appearance-none outline-none disabled:opacity-30 disabled:cursor-default"
           value={ampm}
           ref={ampmRef}
           onChange={handleOnChange}
+          disabled={dayOff === "dayOff"}
         >
           <option value="AM">AM</option>
           <option value="PM">PM</option>

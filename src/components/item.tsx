@@ -1,7 +1,7 @@
 import Box from "@/components/ui/box";
 import TimePicker from "@/components/time-picker";
 import Select from "@/components/ui/select";
-import { printTime } from "@/app/lib/utils";
+import { printTimes } from "@/app/lib/utils";
 import { WeekType, DayOffType } from "@/app/lib/types";
 import dayjs from "dayjs";
 
@@ -12,6 +12,7 @@ type ItemType = {
   workingTime: number;
   dayOff: DayOffType;
   index: number;
+
   handleChangeTime: (
     time: dayjs.Dayjs,
     position: { index: number; place: "start" | "end" }
@@ -37,8 +38,6 @@ const Item = ({
   handleChangeTime,
   handleChangeWorkType,
 }: ItemType) => {
-  const printedWorkingTime = `${Math.floor(workingTime / 60) - 1}:${printTime(workingTime % 60)}`;
-
   return (
     <li className="flex items-center justify-center gap-2 mt-2">
       <Box style="w-16 bg-neutral-500">
@@ -48,15 +47,17 @@ const Item = ({
         time={startTime}
         onChangeTime={handleChangeTime}
         position={{ index, place: "start" }}
+        dayOff={dayOff}
       />
       <span>~</span>
       <TimePicker
         time={endTime}
         onChangeTime={handleChangeTime}
         position={{ index, place: "end" }}
+        dayOff={dayOff}
       />
-      <Box style="w-30 bg-neutral-500 text-neutral-50">
-        <span>+{printedWorkingTime}</span>
+      <Box style={`w-30 bg-neutral-500 text-neutral-50 ${dayOff === "dayOff" && "opacity-30"}`}>
+        <span>{printTimes(workingTime)}</span>
       </Box>
       <Select
         workday={week}
