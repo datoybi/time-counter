@@ -1,7 +1,6 @@
 # [Work time calculator - 일한 시간 계산기](https://work-time-caclulator.vercel.app/)
 
 <br/>
-<br/>
 
 # How to use
 
@@ -10,13 +9,11 @@
 - 매주 월요일마다 기록한 시간이 리셋됩니다. default 시간은 9-6입니다.
 
 <br/>
-<br/>
 
 # 주의할 점
 
 - 데이터는 로컬 스토리지에 저장되기 때문에 `동일 브라우저`에서만 데이터가 저장됩니다. 크롬 브라우저를 사용하여 시간을 기록했다면 계속 크롬 브라우저를 사용해주세요.
 
-<br/>
 <br/>
 
 # 기술 스택
@@ -26,7 +23,6 @@
 - Typescript
 - Tailwind
 
-<br/>
 <br/>
 
 # 기여
