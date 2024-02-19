@@ -24,7 +24,7 @@ const List = () => {
   console.log(data);
 
   useEffect(() => {
-    const isMonday = dayjs().day(1).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD");
+    const isMonday = dayjs().day(0).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD");
     if (!localStorage.getItem("workTime") || isMonday) {
       localStorage.setItem("workTime", JSON.stringify(DATA));
     }
